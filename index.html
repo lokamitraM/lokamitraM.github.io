@@ -1,0 +1,95 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Online Pokedex</title>
+            <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+            <style>
+                .result-item {
+                    transition: 0.3s;
+                }
+
+                .result-item:hover {
+                    transform: scale(1.03);
+                    background-color: #f8f9fa;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h1 class="my-4">Online Pokedex</h1>
+<input type="text" id="search" class="form-control" placeholder="Search..." oninput="search()" list="" autocomplete="off">
+                <datalist id="words"></datalist>
+                <ul id="results" class="list-group my-4"></ul>
+            </div>
+            <script>
+                
+        const data = JSON.parse(unescape("%5B%7B%22English%22%3A%22Pikachu%22%2C%22Chinese%22%3A%22%u6BD4%u5361%u8D85%22%2C%22Definition%22%3A%22Pikachu%20is%20a%20yellow%2C%20mouse-like%20creature%20with%20electrical%20abilities.%22%2C%22Image%20URL%22%3A%22https%3A//assets.pokemon.com/assets/cms2/img/pokedex/full/025.png%22%7D%2C%7B%22English%22%3A%22Charizard%22%2C%22Chinese%22%3A%22%u5674%u706B%u9F8D%22%2C%22Definition%22%3A%22Charizard%20%28Japanese%3A%20%u30EA%u30B6%u30FC%u30C9%u30F3%20Lizardon%29%20is%20a%20dual-type%20Fire/Flying%20Pok%E9mon%20introduced%20in%20Generation%20I.%22%2C%22Image%20URL%22%3A%22https%3A//archives.bulbagarden.net/media/upload/thumb/3/38/0006Charizard.png/1200px-0006Charizard.png%22%7D%5D"));
+        const wordMap = {};
+        const words = [];
+        const englishWords = [];
+        const datalist = document.getElementById("words");
+        const keys = Object.keys(data[0]); // get keys from the first object
+        data.forEach(item => {
+            wordMap[item[keys[0]]] = item;
+            wordMap[item[keys[1]]] = item;
+            words.push(item[keys[0]]);
+            englishWords.push(item[keys[1]]);
+            const option = document.createElement("option");
+            option.value = item[keys[0]];
+            datalist.appendChild(option);
+            const optionEnglish = document.createElement("option");
+            optionEnglish.value = item[keys[1]];
+            datalist.appendChild(optionEnglish);
+        });
+function search() {
+    const searchInput = document.getElementById("search");
+    const query = searchInput.value;
+    const resultsElement = document.getElementById("results");
+    resultsElement.innerHTML = "";
+
+    if(query.trim() === "") {
+        searchInput.setAttribute("list", ""); // Set list attribute to an empty string
+        const reminder = document.createElement("p");
+        reminder.style.color = 'red';
+        reminder.textContent = "Please enter a word to search.";
+        resultsElement.appendChild(reminder);
+        return;
+    } else {
+        searchInput.setAttribute("list", "words"); // Set list attribute to "words" when query is not empty
+    }
+            words.concat(englishWords).forEach(word => {
+                if (word.includes(query)) {
+                    const listItem = document.createElement("li");
+                    listItem.className = "list-group-item result-item my-3 p-3 border rounded shadow";
+                    const headwordDiv = document.createElement("div");
+                    headwordDiv.textContent = wordMap[word][keys[0]];
+                    headwordDiv.className = "font-weight-bold display-4 mb-2";
+                    listItem.appendChild(headwordDiv);
+                    const englishDiv = document.createElement("div");
+                    englishDiv.textContent = wordMap[word][keys[1]];
+                    englishDiv.className = "text-muted display-4 mb-2";
+                    listItem.appendChild(englishDiv);
+                    const definitionDiv = document.createElement("div");
+                    definitionDiv.textContent = wordMap[word][keys[2]];
+                    definitionDiv.className = "mb-3";
+                    listItem.appendChild(definitionDiv);
+                    if (keys[3] && wordMap[word][keys[3]]) {
+                        const imgDiv = document.createElement("div");
+                        imgDiv.className = "d-flex justify-content-center";
+                        const img = document.createElement("img");
+                        img.src = wordMap[word][keys[3]];
+                        img.style.maxWidth = '100%';
+                        img.style.height = 'auto';
+                        imgDiv.appendChild(img);
+                        listItem.appendChild(imgDiv);
+                    }
+                    resultsElement.appendChild(listItem);
+                }
+            });
+        }
+    
+            </script>
+        </body>
+        </html>
+    
